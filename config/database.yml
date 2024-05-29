@@ -58,7 +58,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  url: <%= ENV["BILINGO_DATABASE_URL"]
+  url: <%= ENV["BILINGO_DATABASE_URL"] %>
   username: bilingo
   database: bilingo_test
 
@@ -84,7 +84,7 @@ test:
 #
 production:
   <<: *default
-  url: <%= ENV["BILINGO_DATABASE_URL"]
+  url: <%= ENV["BILINGO_DATABASE_URL"] %>
   database: bilingo_production
   username: bilingo
   password: <%= ENV["BILINGO_DATABASE_PASSWORD"] %>
