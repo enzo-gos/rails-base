@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: cimg/ruby:3.3.0-node
         environment:
-          BILINGO_DATABASE_URL: postgresql://postgres@localhost/bilingo_test
+          BILINGO_DATABASE_URL: postgresql://bilingo@localhost/bilingo_test
 
       - image: circleci/postgres:9.5-alpine
         environment:
