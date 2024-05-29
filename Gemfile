@@ -55,3 +55,5 @@ gem 'rolify', '~> 6.0'
 gem 'pundit', '~> 2.3'
 
 gem 'pagy', '~> 8.4'
+
+gem "simplecov-lcov", "~> 0.8.0"
