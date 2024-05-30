@@ -9,7 +9,7 @@ jobs:
           BILINGO_DATABASE_URL: postgresql://bilingo@localhost/bilingo_test
           CC_TEST_REPORTER_ID: 786b11d501b270c4de0085b0a0eea59c3def497151c97c7ef1fc6268b497a800
 
-      - image: cimg/postgres:9.5-alpine
+      - image: cimg/postgres:16.3.0
         environment:
           POSTGRES_USER: bilingo
           POSTGRES_DB: bilingo_test
