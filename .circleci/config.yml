@@ -50,7 +50,7 @@ jobs:
           paths:
             - .
 
-  published-staging-version-bilingo:
+  published-bilingo-staging-version:
     docker:
       - image: cimg/base:current-22.04
 
@@ -80,7 +80,8 @@ jobs:
 workflows:
   build-and-test:
     jobs:
-      - test-ruby
+      - build-test-bilingo
+      - published-bilingo-staging-version
     # - deploy:
     #     requires:
     #       - test-ruby
