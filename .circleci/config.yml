@@ -77,10 +77,18 @@ jobs:
             docker login -u ${DOCKER_ACCOUNT} -p ${DOCKER_TOKEN}
             docker-compose -f docker-compose.prod.yml push
 
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
   deploy-bilingo-staging:
     docker:
       - image: cimg/base:stable
     steps:
+      - attach_workspace:
+          at: .
+
       - add_ssh_keys:
           fingerprints:
             - ${VPS_FINGERPRINT}
