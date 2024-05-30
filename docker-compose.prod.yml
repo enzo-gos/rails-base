@@ -6,6 +6,8 @@ x-webservice: &webservice
   hostname: localhost
   networks:
     - proxy
+  env_file:
+    - .env
   environment:
     FORCE_COLOR: 1
     DEBUG_COLORS: 'true'
@@ -21,8 +23,6 @@ services:
     container_name: bilingo
     ports:
       - 3001:3000
-    env_file:
-      - .env
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
