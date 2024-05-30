@@ -63,9 +63,9 @@ jobs:
       - run:
           name: Build staging image
           command: |
-            BILINGO_DATABASE_URL=${DATABASE_URL}
-            REDIS_URL=${REDIS_URL}
-            RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
+            echo BILINGO_DATABASE_URL=${DATABASE_URL} > .env
+            echo REDIS_URL=${REDIS_URL} >> .env
+            echo RAILS_MASTER_KEY=${RAILS_MASTER_KEY} >> .env
             docker network create proxy
             docker-compose -f docker-compose.prod.yml build --pull
             docker-compose -f docker-compose.prod.yml up -d
@@ -98,9 +98,7 @@ jobs:
           command: |
             ssh -o StrictHostKeyChecking=no -v root@mtech.id.vn -p 24700 "chmod +x ~/deploy.sh && ~/deploy.sh --service bilingo --service-path bilingo-app --mode init"
             scp -P 24700 -o StrictHostKeyChecking=no -v docker-compose.prod.yml root@mtech.id.vn:bilingo-app/bilingo
-            ssh -o StrictHostKeyChecking=no -v root@mtech.id.vn -p 24700 "echo BILINGO_DATABASE_URL=${DATABASE_URL} > bilingo-app/bilingo/.env"
-            ssh -o StrictHostKeyChecking=no -v root@mtech.id.vn -p 24700 "echo REDIS_URL=${REDIS_URL} >> bilingo-app/bilingo/.env"
-            ssh -o StrictHostKeyChecking=no -v root@mtech.id.vn -p 24700 "echo RAILS_MASTER_KEY=${RAILS_MASTER_KEY} >> bilingo-app/bilingo/.env"
+            scp -P 24700 -o StrictHostKeyChecking=no -v .env root@mtech.id.vn:bilingo-app/bilingo
             ssh -o StrictHostKeyChecking=no -v root@mtech.id.vn -p 24700 "chmod +x ~/deploy.sh && ~/deploy.sh --service bilingo --service-path bilingo-app --mode all"
 
 workflows:
