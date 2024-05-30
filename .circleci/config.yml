@@ -89,7 +89,7 @@ jobs:
           name: Deploy to staging cloud
           command: |
             ssh -o StrictHostKeyChecking=no -v root@mtech.id.vn -p 24700 "chmod +x ~/deploy.sh && ~/deploy.sh --service bilingo --service-path bilingo-app --mode init"
-            scp -P 24700 -O StrictHostKeyChecking=no -V docker-compose.prod.yml root@mtech.id.vn:bilingo-app/bilingo
+            scp -P 24700 -o StrictHostKeyChecking=no -v docker-compose.prod.yml root@mtech.id.vn:bilingo-app/bilingo
             ssh -o StrictHostKeyChecking=no -v root@mtech.id.vn -p 24700 "chmod +x ~/deploy.sh && ~/deploy.sh --service bilingo --service-path bilingo-app --mode deploy"
 workflows:
   build-and-test:
