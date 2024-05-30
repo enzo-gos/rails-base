@@ -81,9 +81,6 @@ Style/Semicolon:
 Style/SingleLineBlockParams:
   Enabled: false
 
-Style/HashEachMethods:
-  Enabled: false
-
 Style/HashTransformKeys:
   Enabled: false
 
@@ -131,6 +128,9 @@ Metrics/PerceivedComplexity:
 Metrics/CyclomaticComplexity:
   Max: 10
 
+Metrics/LineLength:
+  Enabled: false
+
 Lint/DuplicateBranch: # (new in 1.3)
   Enabled: true
 
@@ -173,5 +173,5 @@ Style/RedundantArgument: # (new in 1.4)
 Style/SwapValues: # (new in 1.1)
   Enabled: true
 
-Layout/EndOfLine:
-  Enabled: False
+Performance/HashEachMethods:
+  Enabled: false
