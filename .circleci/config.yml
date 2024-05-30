@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   ruby: circleci/ruby@2.0.1
 jobs:
-  build-container:
+  build-test-bilingo:
     docker:
       - image: cimg/ruby:3.3.0-node
         environment:
@@ -19,40 +19,56 @@ jobs:
 
     steps:
       - checkout
+      - ruby/install-deps
 
       - run:
-          name: Wait for DB
+          name: wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
-      - setup_remote_docker
-
       - run:
-          name: Build build production image
-          command: |
-            DATABASE_URL='postgresql://bilingo@localhost/bilingo_test'
-            docker network create proxy
-            docker-compose -f docker-compose.prod.yml build --pull
-
-      - run:
-          name: Test coverage
-          command: |
-            DATABASE_URL='postgresql://bilingo@localhost/bilingo_test'
-            docker-compose -f docker-compose.prod.yml up -d
-            docker-compose -f docker-compose.prod.yml run bundle exec rspec
+          name: Database setup
+          command: bundle exec rake db:test:prepare
 
       - run:
           name: Setup Code Climate test-reporter
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
             chmod +x ./cc-test-reporter
+
       - run:
           name: rspec test
           command: bundle exec rspec
+
       - run:
           name: 'Upload coverage report'
           command: |
             ./cc-test-reporter format-coverage -t simplecov $CIRCLE_ARTIFACTS/coverage/.resultset.json
             ./cc-test-reporter upload-coverage
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  published-staging-version-bilingo:
+    docker:
+      - image: cimg/base:current-22.04
+
+    steps:
+      - attach_workspace:
+          at: .
+
+      - setup_remote_docker
+
+      - run:
+          name: Build production image
+          command: |
+            DATABASE_URL='postgres://default:BpjHMCxhL57E@ep-falling-field-a17vrl8g-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require'
+            REDIS_URL='rediss://default:AZ9rAAIncDEzZmRlMGY0YWUzMzE0MDMxODI5M2YwN2VhOGE3MDE2M3AxNDA4MTE@stunning-gull-40811.upstash.io:6379'
+            RAILS_MASTER_KEY='6ced4a69ac51d9cde3c91d78a89d7c64'
+            docker network create proxy
+            docker-compose -f docker-compose.prod.yml build --pull
+
   deploy:
     #deploy
     docker:

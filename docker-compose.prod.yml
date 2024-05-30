@@ -7,9 +7,6 @@ x-webservice: &webservice
   networks:
     - proxy
   environment:
-    DATABASE_URL: postgres://default:BpjHMCxhL57E@ep-falling-field-a17vrl8g-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require
-    REDIS_URL: rediss://default:AZ9rAAIncDEzZmRlMGY0YWUzMzE0MDMxODI5M2YwN2VhOGE3MDE2M3AxNDA4MTE@stunning-gull-40811.upstash.io:6379
-    RAILS_MASTER_KEY: 6ced4a69ac51d9cde3c91d78a89d7c64
     FORCE_COLOR: 1
     DEBUG_COLORS: 'true'
     TERM: xterm-256color
@@ -20,7 +17,7 @@ x-webservice: &webservice
 services:
   bilingo:
     <<: *webservice
-    # image: wgmin/bilingo
+    image: wgmin/bilingo
     container_name: bilingo
     ports:
       - 3001:3000
@@ -32,11 +29,11 @@ services:
       - traefik.http.routers.bilingo.tls=true
       - traefik.http.routers.bilingo.tls.certresolver=letsencrypt
     volumes:
-      - ./coverage:/rails/coverage
+      - coverage:/rails/coverage
 
   bilingo-sidekiq:
     <<: *webservice
-    # image: wgmin/bilingo-sidekiq
+    image: wgmin/bilingo-sidekiq
     container_name: bilingo-sidekiq
     command: bundle exec sidekiq
     depends_on:
