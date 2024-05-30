@@ -51,3 +51,19 @@ if [[ $MODE == "deploy" ]]; then
 
   echo "Deploy successfully"
 fi
+
+if [[ $MODE == "all" ]]; then
+  if [[ ! -d $SERVICE_DIR ]]; then
+    echo 'Please intialize project before deploy'
+    exit 1
+  fi
+  echo "Start build and deploy"
+
+  cd $SERVICE_DIR
+  docker compose -f docker-compose.prod.yml down
+  docker compose -f docker-compose.prod.yml pull
+  docker compose -f docker-compose.prod.yml up -d
+  docker system prune -a -f
+
+  echo "Deploy successfully"
+fi
