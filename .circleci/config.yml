@@ -75,7 +75,7 @@ jobs:
           command: |
             docker-compose -f docker-compose.prod.yml down
             docker login -u ${DOCKER_ACCOUNT} -p ${DOCKER_TOKEN}
-            docker-compose -f docker-compose-prod.yml push
+            docker-compose -f docker-compose.prod.yml push
 
   deploy:
     #deploy
