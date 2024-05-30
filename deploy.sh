@@ -28,7 +28,7 @@ if [[ -z $SERVICE || -z $SERVICE_PATH || -z $MODE ]]; then
     exit 1
 fi
 
-SERVICE_DIR="~/${SERVICE_PATH}/${SERVICE}"
+SERVICE_DIR="${SERVICE_PATH}/${SERVICE}"
 
 if [[ $MODE == "init" ]]; then
   if [[ ! -d $SERVICE_DIR ]]; then
