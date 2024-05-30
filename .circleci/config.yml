@@ -22,7 +22,7 @@ jobs:
       - ruby/install-deps
 
       - run:
-          name: wait for DB
+          name: Waiting for database
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
@@ -30,17 +30,17 @@ jobs:
           command: bundle exec rake db:test:prepare
 
       - run:
-          name: Setup Code Climate test-reporter
+          name: Setup code climate test-reporter
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
             chmod +x ./cc-test-reporter
 
       - run:
-          name: rspec test
+          name: Rspec coverage test
           command: bundle exec rspec
 
       - run:
-          name: 'Upload coverage report'
+          name: Code climate upload test report
           command: |
             ./cc-test-reporter format-coverage -t simplecov $CIRCLE_ARTIFACTS/coverage/.resultset.json
             ./cc-test-reporter upload-coverage
@@ -78,13 +78,19 @@ jobs:
             docker-compose -f docker-compose.prod.yml push
 
   deploy:
-    #deploy
     docker:
       - image: cimg/base:stable
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - ${VPS_FINGERPRINT}
+
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          name: Deploy to staging cloud
+          command: |
+            ssh -o StrictHostKeyChecking=no -v root@mtech.id.vn -p 24700 "chmod +x ~/deploy.sh && ~/deploy.sh --service bilingo --service-path bilingo-app --mode init"
+            scp -p 24700 -o StrictHostKeyChecking=no -v docker-compose.prod.yml root@mtech.id.vn:~/bilingo-app/bilingo
+            ssh -o StrictHostKeyChecking=no -v root@mtech.id.vn -p 24700 "chmod +x ~/deploy.sh && ~/deploy.sh --service bilingo --service-path bilingo-app --mode deploy"
 workflows:
   build-and-test:
     jobs:
