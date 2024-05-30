@@ -22,8 +22,7 @@ plugins:
   reek:
     enabled: true
   rubocop:
-    enabled: false
-    channel: rubocop-1-70
+    enabled: true
 ratings:
   paths:
     - 'app/**'
