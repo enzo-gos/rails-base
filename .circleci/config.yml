@@ -68,12 +68,10 @@ jobs:
             echo RAILS_MASTER_KEY=${RAILS_MASTER_KEY} >> .env
             docker network create proxy
             docker-compose -f docker-compose.prod.yml build --pull
-            docker-compose -f docker-compose.prod.yml up -d
 
       - run:
           name: Published staging image
           command: |
-            docker-compose -f docker-compose.prod.yml down
             docker login -u ${DOCKER_ACCOUNT} -p ${DOCKER_TOKEN}
             docker-compose -f docker-compose.prod.yml push
 
