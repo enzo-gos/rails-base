@@ -2,14 +2,14 @@ version: 2.1
 orbs:
   ruby: circleci/ruby@2.0.1
 jobs:
-  test-ruby:
+  build-container:
     docker:
       - image: cimg/ruby:3.3.0-node
         environment:
           BILINGO_DATABASE_URL: postgresql://bilingo@localhost/bilingo_test
           CC_TEST_REPORTER_ID: 786b11d501b270c4de0085b0a0eea59c3def497151c97c7ef1fc6268b497a800
 
-      - image: circleci/postgres:9.5-alpine
+      - image: cimg/postgres:9.5-alpine
         environment:
           POSTGRES_USER: bilingo
           POSTGRES_DB: bilingo_test
@@ -19,13 +19,27 @@ jobs:
 
     steps:
       - checkout
-      - ruby/install-deps
+
       - run:
-          name: wait for DB
+          name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - setup_remote_docker
+
       - run:
-          name: Database setup
-          command: bundle exec rake db:test:prepare
+          name: Build build production image
+          command: |
+            DATABASE_URL='postgresql://bilingo@localhost/bilingo_test'
+            docker network create proxy
+            docker-compose -f docker-compose.prod.yml build --pull
+
+      - run:
+          name: Test coverage
+          command: |
+            DATABASE_URL='postgresql://bilingo@localhost/bilingo_test'
+            docker-compose -f docker-compose.prod.yml up -d
+            docker-compose -f docker-compose.prod.yml run bundle exec rspec
+
       - run:
           name: Setup Code Climate test-reporter
           command: |
