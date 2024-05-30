@@ -28,6 +28,11 @@ services:
       - traefik.http.routers.bilingo.entrypoints=websecure
       - traefik.http.routers.bilingo.tls=true
       - traefik.http.routers.bilingo.tls.certresolver=letsencrypt
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/up']
+      interval: 200s
+      timeout: 200s
+      retries: 5
 
   bilingo-sidekiq:
     <<: *webservice

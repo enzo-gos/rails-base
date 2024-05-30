@@ -7,7 +7,7 @@ jobs:
       - image: cimg/ruby:3.3.0-node
         environment:
           BILINGO_DATABASE_URL: postgresql://bilingo@localhost/bilingo_test
-          CC_TEST_REPORTER_ID: 786b11d501b270c4de0085b0a0eea59c3def497151c97c7ef1fc6268b497a800
+          CC_TEST_REPORTER_ID: ${CC_TEST_REPORTER_ID}
 
       - image: cimg/postgres:9.6.22
         environment:
@@ -61,13 +61,21 @@ jobs:
       - setup_remote_docker
 
       - run:
-          name: Build production image
+          name: Build staging image
           command: |
-            BILINGO_DATABASE_URL='postgres://default:BpjHMCxhL57E@ep-falling-field-a17vrl8g-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require'
-            REDIS_URL='rediss://default:AZ9rAAIncDEzZmRlMGY0YWUzMzE0MDMxODI5M2YwN2VhOGE3MDE2M3AxNDA4MTE@stunning-gull-40811.upstash.io:6379'
-            RAILS_MASTER_KEY='6ced4a69ac51d9cde3c91d78a89d7c64'
+            BILINGO_DATABASE_URL=${DATABASE_URL}
+            REDIS_URL=${REDIS_URL}
+            RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
             docker network create proxy
             docker-compose -f docker-compose.prod.yml build --pull
+            docker-compose -f docker-compose.prod.yml up -d
+
+      - run:
+          name: Published staging image
+          command: |
+            docker-compose -f docker-compose.prod.yml down
+            docker login -u ${DOCKER_ACCOUNT} -p ${DOCKER_TOKEN}
+            docker-compose -f docker-compose-prod.yml push
 
   deploy:
     #deploy
