@@ -28,8 +28,6 @@ services:
       - traefik.http.routers.bilingo.entrypoints=websecure
       - traefik.http.routers.bilingo.tls=true
       - traefik.http.routers.bilingo.tls.certresolver=letsencrypt
-    volumes:
-      - coverage:/rails/coverage
 
   bilingo-sidekiq:
     <<: *webservice

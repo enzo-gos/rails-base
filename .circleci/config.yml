@@ -81,7 +81,9 @@ workflows:
   build-and-test:
     jobs:
       - build-test-bilingo
-      - published-bilingo-staging-version
+      - published-bilingo-staging-version:
+          requires:
+            - build-test-bilingo
     # - deploy:
     #     requires:
     #       - test-ruby
