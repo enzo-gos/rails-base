@@ -1,6 +1,13 @@
 version: 2.1
+
+defaults: &defaults
+  filters:
+    branches:
+      only: main
+
 orbs:
   ruby: circleci/ruby@2.0.1
+
 jobs:
   build-test-bilingo:
     docker:
@@ -102,10 +109,13 @@ jobs:
 workflows:
   build-and-test:
     jobs:
-      - build-test-bilingo
+      - build-test-bilingo:
+          <<: *defaults
       - published-bilingo-staging-version:
+          <<: *defaults
           requires:
             - build-test-bilingo
       - deploy-bilingo-staging:
+          <<: *defaults
           requires:
             - published-bilingo-staging-version
