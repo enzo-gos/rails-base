@@ -111,15 +111,10 @@ workflows:
     jobs:
       - build-test-bilingo:
           <<: *defaults
-      - hold:
-          <<: *defaults
-          type: approval
-          requires:
-            - build-test-bilingo
       - published-bilingo-staging-version:
           <<: *defaults
           requires:
-            - hold
+            - build-test-bilingo
       - deploy-bilingo-staging:
           <<: *defaults
           requires:
